@@ -10,6 +10,7 @@ using namespace std;
 vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 	vector<vector<int> > res(size, vector<int> (size));
 
+	#pragma omp parallel for
 	for(int i=0;i<size;i++){
 		for(int j=0;j<size;j++){
 			res[i][j] = mat[i][j];
@@ -28,6 +29,7 @@ vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 }
 
 void print_mat(vector<vector<int> > mat, int size){
+	#pragma omp parallel for
 	for(int i=0;i<size;i++){
 		for(int j=0;j<size;j++){
 				cout << mat[i][j] << "     ";
