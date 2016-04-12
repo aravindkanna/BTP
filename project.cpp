@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <math.h>
 
 #include "omp.h"
 
@@ -30,9 +31,13 @@ vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 	return res;
 }
 
+int rootNlogN(int n){
+	return sqrt(n)*log(n);
+}
+
 /*vector<vector<int> > R2(vector<vector<int> > mat, int size, 
 	vector<int> S, int d, int n, int e){
-
+	
 }*/
 
 void print_mat(vector<vector<int> > mat, int size){
@@ -66,5 +71,6 @@ int main(){
 	b1 = B1(mat, N);
 
 	print_mat(b1, N);
+	cout << rootNlogN(24) << endl;
 	return 0;
 }
