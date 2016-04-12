@@ -10,14 +10,16 @@ using namespace std;
 vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 	vector<vector<int> > res(size, vector<int> (size));
 
-	#pragma omp parallel for
+	#pragma omp parallel for private(i, j)
 	for(int i=0;i<size;i++){
 		for(int j=0;j<size;j++){
 			res[i][j] = mat[i][j];
 		}
 	}
 
+
 	for(int k=0;k<size;k++){
+		#pragma omp parallel for private(i, j)
 		for(int i=0;i<size;i++){
 			for(int j=0;j<size;j++){
 				res[i][j] = res[i][j] || (res[i][k] && res[k][j]);
@@ -27,6 +29,11 @@ vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 
 	return res;
 }
+
+/*vector<vector<int> > R2(vector<vector<int> > mat, int size, 
+	vector<int> S, int d, int n, int e){
+
+}*/
 
 void print_mat(vector<vector<int> > mat, int size){
 	#pragma omp parallel for
