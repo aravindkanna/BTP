@@ -35,6 +35,10 @@ int rootNlogN(int n){
 	return sqrt(n)*log(n);
 }
 
+int rootN(int n){
+	return sqrt(n);
+}
+
 /*vector<vector<int> > R2(vector<vector<int> > mat, int size, 
 	vector<int> S, int d, int n, int e){
 	
@@ -71,6 +75,6 @@ int main(){
 	b1 = B1(mat, N);
 
 	print_mat(b1, N);
-	cout << rootNlogN(24) << endl;
+	//cout << rootNlogN(24) << endl;
 	return 0;
 }
