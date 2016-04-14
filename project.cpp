@@ -39,10 +39,11 @@ int rootN(int n){
 	return sqrt(n);
 }
 
-/*vector<vector<int> > R2(vector<vector<int> > mat, int size, 
+vector<vector<int> > R2(vector<vector<int> > mat, int size, 
 	vector<int> S, int d, int n, int e){
-	
-}*/
+	vector<vector<int> > res(size, vector<int> (size));
+	return res;
+}
 
 void print_mat(vector<vector<int> > mat, int size){
 	#pragma omp parallel for
