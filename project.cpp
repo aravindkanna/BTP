@@ -39,6 +39,10 @@ int rootN(int n){
 	return sqrt(n);
 }
 
+int logN(int n){
+	return log(n);
+}
+
 vector<vector<int> > R2(vector<vector<int> > mat, int size, 
 	vector<int> S, int d, int n, int e){
 	vector<vector<int> > res(size, vector<int> (size));
