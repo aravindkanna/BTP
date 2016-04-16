@@ -7,6 +7,18 @@
 
 using namespace std;
 
+int rootNlogN(int n){
+	return sqrt(n)*log(n);
+}
+
+int rootN(int n){
+	return sqrt(n);
+}
+
+int logN(int n){
+	return log(n);
+}
+
 //follows sequential Floyd Marshal Algorithm
 vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 	vector<vector<int> > res(size, vector<int> (size));
@@ -31,17 +43,7 @@ vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 	return res;
 }
 
-int rootNlogN(int n){
-	return sqrt(n)*log(n);
-}
 
-int rootN(int n){
-	return sqrt(n);
-}
-
-int logN(int n){
-	return log(n);
-}
 
 vector<vector<int> > R2(vector<vector<int> > mat, int size, 
 	vector<int> S, int d, int n, int e){
