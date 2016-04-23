@@ -2,6 +2,9 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <stdlib.h>
+#include <set>
+#include <ctime>
 
 #include "omp.h"
 
@@ -17,6 +20,22 @@ int rootN(int n){
 
 int logN(int n){
 	return log(n);
+}
+
+vector<int> get_distinguished(int size, int s1){
+	
+	set<int> s;
+	srand(time(NULL));
+	while(1){
+		//srand(time(NULL));
+		int x = rand()%size;
+		s.insert(x);
+		if(s.size() == s1){
+			break;
+		}
+	}
+	vector<int> S1(s.begin(), s.end());
+	return S1;
 }
 
 //follows sequential Floyd Marshal Algorithm
@@ -48,6 +67,9 @@ vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 vector<vector<int> > R2(vector<vector<int> > mat, int size, 
 	vector<int> S, int d, int n, int e){
 	vector<vector<int> > res(size, vector<int> (size));
+
+	int s1 = rootNlogN(size);
+	vector<int> S1 = get_distinguished(size, s1);
 	return res;
 }
 
@@ -83,5 +105,12 @@ int main(){
 
 	print_mat(b1, N);
 	//cout << rootNlogN(24) << endl;
+
+	/*vector<int> v = get_distinguished(N, rootNlogN(N));
+	cout << v.size() << endl;
+	for(int i=0;i<v.size();i++){
+		cout << v[i] << "   ";
+	}
+	cout << endl;*/
 	return 0;
 }
