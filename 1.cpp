@@ -1,38 +1,25 @@
-#include <stdio.h>
-#include <set>
+#include <cstdio>
+#include <stdlib.h>
 #include <iostream>
-#include <vector>
+#include <ctime>
+
+#include "omp.h"
 
 using namespace std;
 
 int main(){
-	set<int> s;
-	s.insert(1);
-	s.insert(1);
-	s.insert(2);
-
-	/*set<int>::iterator it = s.begin();
-	for(it=s.begin();it!=s.end();it++){
-		cout << *it << "     " ;
+	int a = 0;
+	int n = omp_get_num_threads();
+	clock_t start = clock();
+	#pragma omp parallel for
+	for(int i=0;i<10000000;i++){
+		for(int j=0;j<100;j++){
+			a++;
+		}		
 	}
-	cout << endl;*/
-
-	int m = 5;
-	int n = 10;
-	vector<vector<int> > vec(5, vector<int> (10));
-	vector<int> v(10);
-
-	for(int i=0;i<10;i++){
-		cout << v[i] << "    ";
-	}
-	cout << endl;
-
-	/*for(int i=0;i<vec.size();i++){
-		for(int j=0;j<vec[i].size();j++){
-			cout << vec[i][j] << "    ";
-		}
-		cout << endl;
-	}*/
-
+	clock_t end = clock();
+	cout << "Start Time: " << start << endl;
+	cout << "End Time: " << end << endl;
+	cout << "Difference: " << end-start << endl;
 	return 0;
 }

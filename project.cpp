@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <set>
 #include <ctime>
+#include <algorithm>
 
 #include "omp.h"
 
@@ -20,10 +21,20 @@ void modify(vector<vector<int> > &mat, int size){
 	}
 }
 
+void print_mat(vector<vector<int> > mat, int size){
+	#pragma omp parallel for
+	for(int i=0;i<size;i++){
+		for(int j=0;j<size;j++){
+				cout << mat[i][j] << "     ";
+		}
+		cout << endl;
+	}
+}
+
 void search(vector<vector<int> > mat, int size, 
 	int v0, int d, vector<int> &vec, vector<int> &reach){
 	//base case
-	d = d + 1;
+	//d = d + 1;
 	reach[v0] = 1;
 	if(d == 1){
 		for(int i=0;i<size;i++){
@@ -45,8 +56,9 @@ void search(vector<vector<int> > mat, int size,
 	vec.push_back(v0);
 }
 
-int rootNlogN(int n){
-	return ceil(sqrt(n)*log(n));
+void rem_dup(vector<int> &v){
+	sort(v.begin(), v.end());
+	v.erase(unique(v.begin(), v.end()), v.end());
 }
 
 int rootN(int n){
@@ -56,6 +68,18 @@ int rootN(int n){
 int logN(int n){
 	return ceil(log(n));
 }
+
+int rootNlogN(int n){
+	/*int x = rootN(n)*logN(n); 
+	if(x == n && x>0){
+		return x-1;
+	}
+	else{
+		return x;
+	}*/
+	return ceil(sqrt(n)*log(n));
+}
+
 
 
 /***
@@ -123,16 +147,53 @@ vector<vector<int> > R2(vector<vector<int> > mat, int size,
 	vector<int> S1 = get_distinguished(size, s1);
 	//S1 is the set of rootNlogN distinguished nodes
 
+	//Step-1 is to select s1 distinguished nodes and to search for n/s1 distance
+	//for other nodes.
 	vector<vector<int> > res1(size, vector<int> (size));
 	int search_dist = ceil(size/s1);
 	for(int i=0;i<s1;i++){
 		vector<int> vec;
 		vector<int> reach(size);
-		search(mat, size, S1[i], search_dist, vec, reach);
+		search(mat, size, S1[i], search_dist+1, vec, reach);
+		rem_dup(vec);
 
-		
+		int x = vec.size();
+		for(int j=0;j<x;j++){
+			res1[S1[i]][vec[j]] = 1;
+		}
+	}
+	print_mat(res1, size);
+	cout << endl << endl;
+	//Step 1 is completed. Next step is to find transitive closure for the 
+	//graph obtained by res1.
+
+	vector<vector<int> > res2(size, vector<int> (size));
+	res2 = B1(res2, size);
+	print_mat(res2, size);
+	cout << endl << endl;
+
+	//Now the next step is to add these edges to the original graph.
+	for(int i=0;i<size;i++){
+		for(int j=0;j<size;j++){
+			if(!mat[i][j] && res2[i][j]){
+				mat[i][j] = 1;
+			}
+		}
 	}
 
+	//Next step is to search from original S nodes to a distance of n/s1 
+	//in the resulting mat graph. Also search_dist is same as before.
+	for(int i=0;i<s;i++){
+		vector<int> vec;
+		vector<int> reach(size);
+		search(mat, size, S[i], search_dist+1, vec, reach);
+		rem_dup(vec);
+
+		int x = vec.size();
+		for(int j=0;j<x;j++){
+			res[S[i]][vec[j]] = 1;
+		}
+	}
 
 
 	/*//Base case
@@ -180,16 +241,6 @@ vector<vector<int> > R2(vector<vector<int> > mat, int size,
 	return res;
 }
 
-void print_mat(vector<vector<int> > mat, int size){
-	#pragma omp parallel for
-	for(int i=0;i<size;i++){
-		for(int j=0;j<size;j++){
-				cout << mat[i][j] << "     ";
-		}
-		cout << endl;
-	}
-}
-
 int main(){
 
 	/***
@@ -203,6 +254,7 @@ int main(){
 	***/
 
 	int N;
+	cout << "Enter size of matrix:" << endl;
 	cin >> N;
 	
 	vector<vector<int> > mat(N, vector<int> (N));
@@ -220,7 +272,7 @@ int main(){
 	modify(mat, N);
 
 	vector<vector<int> > b1(N, vector<int> (N));
-	b1 = B1(mat, N);
+	//b1 = B1(mat, N);
 
 	//print_mat(b1, N);
 	//cout << rootNlogN(24) << endl;
@@ -232,20 +284,24 @@ int main(){
 	}
 	cout << endl;*/
 
+	cout << rootNlogN(2) << endl;
+
 	vector<int> S;
-	for(int i=0;i<N;i++){
+	for(int i=0;i<N;i=i+2){
 		S.push_back(i);
 	}
-	/*vector<vector<int> > r2(N, vector<int> (N));
+	vector<vector<int> > r2(N, vector<int> (N));
 	r2 = R2(mat, N, S, 2, N, N);
-	print_mat(r2, N);*/
+	print_mat(r2, N);
 
 	vector<int> vec;
 	vector<int> reach(N);
-	search(mat, N, 2, 2, vec, reach);
+	search(mat, N, 2, 3, vec, reach);
+	rem_dup(vec);
 	for(int i=0;i<vec.size();i++){
 		cout << vec[i] << "   ";
 	}
+	cout << endl;
 
 	return 0;
 }
