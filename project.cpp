@@ -105,7 +105,7 @@ vector<int> get_distinguished(int num_nodes, int num_dist){
 	return S1;
 }
 
-//follows sequential Floyd Marshal Algorithm
+//follows sequential Floyd Warshall Algorithm
 vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 	vector<vector<int> > res(size, vector<int> (size));
 
