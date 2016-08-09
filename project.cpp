@@ -39,7 +39,7 @@ void print_mat(vector<vector<int> > mat, int size){
 //tested..!!!
 void search(vector<vector<int> > mat, int size, 
 	int v0, int d, vector<int> &vec, vector<int> &reach){
-	
+
 	reach[v0] = 1;
 	vec.push_back(v0);
 	if(d == 1){
@@ -133,39 +133,48 @@ vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 	a distance of d.
 ***/
 vector<vector<int> > R2(vector<vector<int> > mat, int size, 
-	vector<int> S, int d, int n, int e){
+	vector<int> S, int d){
 
 	int s = S.size();
-	vector<vector<int> > res(size, vector<int> (size));
+	vector<vector<int> > res(size, vector<int> (size, 0));
 
 	int s1 = rootNlogN(size);
 	vector<int> S1 = get_distinguished(size, s1);
+	cout << s1 << endl;
+	for(int i = 0;i < s1;i++) {
+		cout << S1[i] << "  ";
+	}
+	cout << endl << endl;
+
+
 	//S1 is the set of rootNlogN distinguished nodes
 
 	//Step-1 is to select s1 distinguished nodes and to search for n/s1 distance
 	//for other nodes.
-	vector<vector<int> > res1(size, vector<int> (size));
+
+	/*
+		We have to create a new Graph H
+	*/
+	vector<vector<int> > H(size, vector<int> (size));
 	int search_dist = ceil(size/s1);
+	cout << "search " << search_dist << endl;
+
 	for(int i = 0;i < s1;i++){
 		vector<int> vec;
 		vector<int> reach(size);
-		search(mat, size, S1[i], search_dist + 1, vec, reach);
-		rem_dup(vec);
+		search(mat, size, S1[i], search_dist, vec, reach);
 
 		int x = vec.size();
-		for(int j=0;j<x;j++){
-			res1[S1[i]][vec[j]] = 1;
+		for(int j = 0;j < x;j++){
+			if(find(S1.begin(), S1.end(), vec[i]) != vec.end())
+				H[S1[i]][vec[j]] = 1;
 		}
 	}
-	print_mat(res1, size);
-	cout << endl << endl;
 	//Step 1 is completed. Next step is to find transitive closure for the 
-	//graph obtained by res1.
+	//graph obtained by H.
 
 	vector<vector<int> > res2(size, vector<int> (size));
-	res2 = B1(res2, size);
-	print_mat(res2, size);
-	cout << endl << endl;
+	res2 = B1(H, size);
 
 	//Now the next step is to add these edges to the original graph.
 	for(int i=0;i<size;i++){
@@ -181,8 +190,7 @@ vector<vector<int> > R2(vector<vector<int> > mat, int size,
 	for(int i=0;i<s;i++){
 		vector<int> vec;
 		vector<int> reach(size);
-		search(mat, size, S[i], search_dist+1, vec, reach);
-		rem_dup(vec);
+		search(mat, size, S[i], search_dist, vec, reach);
 
 		int x = vec.size();
 		for(int j=0;j<x;j++){
@@ -222,16 +230,12 @@ int main(){
 	}
 
 	modify(mat, N);
-	print_mat(mat, N);
-
-	vector<int> vec;
-	vector<int> reach(N, 0);
-	search(mat, N, 3, 2, vec, reach);
-
-	cout << endl << endl;
-	for(int i = 0;i < vec.size();i++) {
-		cout << vec[i] << "    ";
-	}
-	cout <<endl;
+	vector<int> S;
+	S.push_back(1);
+	S.push_back(2);
+	S.push_back(6);
+	//vector<vector<int> > vec = R2(mat, N, S, 1);
+	vector<vector<int> > vec = B1(mat, N);
+	print_mat(vec, N);
 	return 0;
 }
