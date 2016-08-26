@@ -43,6 +43,7 @@ void search(vector<vector<int> > mat, int size,
 	reach[v0] = 1;
 	vec.push_back(v0);
 	if(d == 1){
+		#pragma omp parallel for default(shared) private(i)
 		for(int i = 0;i < size;i++){
 			if(mat[v0][i] == 1 && reach[i] == 0){
 				vec.push_back(i);
@@ -125,6 +126,40 @@ vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 }
 
 
+vector<vector<int> > B2(vector<vector<int> > mat, int size, vector<int> Sources, int distance, int edges) {
+	
+	vector<vector<int> > H(size, vector<int> (size, 0));
+
+	int s = Sources.size();
+	int groups = ceil(s / distance);
+
+	int i = 0;
+	while(i < s) {
+		int j = distance;
+		vector<int> subgroup;
+		while(j && i < s) {
+			subgroup.push_back(Sources[i++]);
+			j--;
+		}
+
+		int K = subgroup.size();
+		vector<vector<int> > vec(K, vector<int> ());
+		
+		#pragma omp parallel for num_threads(edges)
+		for(int k = 0;k < K;k++) {
+			vector<int> reach(size);
+			search(mat, size, Sources[subgroup[k]], distance, vec[k], reach);
+		}
+
+		for(int k = 0;k < K;k++) {
+			for(int l = 0;l < vec[k].size();l++) {
+				H[subgroup[k]][vec[k][l]] = 1;
+			}
+		}
+	}
+	return H;
+}
+
 /***
 	This function returns a matrix 
 	Can call that transitive closure of s nodes specified in S, searched through
@@ -132,6 +167,9 @@ vector<vector<int> > B1(vector<vector<int> > mat, int size) {
 	The matrix returned gives you an idea of what nodes are reachable from S to 
 	a distance of d.
 ***/
+	/***
+		TODO : need to make s1 dynamic.
+	***/
 vector<vector<int> > R2(vector<vector<int> > mat, int size, 
 	vector<int> S, int d){
 
@@ -140,17 +178,11 @@ vector<vector<int> > R2(vector<vector<int> > mat, int size,
 
 	int s1 = rootNlogN(size);
 	vector<int> S1 = get_distinguished(size, s1);
-	cout << s1 << endl;
-	for(int i = 0;i < s1;i++) {
-		cout << S1[i] << "  ";
-	}
-	cout << endl << endl;
-
-
-	//S1 is the set of rootNlogN distinguished nodes
-
-	//Step-1 is to select s1 distinguished nodes and to search for n/s1 distance
-	//for other nodes.
+	/*
+		S1 is the set of rootNlogN distinguished nodes
+		Step-1 is to select s1 distinguished nodes and to search for n/s1 distance
+		for other nodes.
+	*/
 
 	/*
 		We have to create a new Graph H
@@ -159,12 +191,14 @@ vector<vector<int> > R2(vector<vector<int> > mat, int size,
 	int search_dist = ceil(size/s1);
 	cout << "search " << search_dist << endl;
 
+	#pragma omp parallel for default(shared) private(i)
 	for(int i = 0;i < s1;i++){
 		vector<int> vec;
 		vector<int> reach(size);
 		search(mat, size, S1[i], search_dist, vec, reach);
 
 		int x = vec.size();
+		#pragma omp parallel for default(shared) private(j)
 		for(int j = 0;j < x;j++){
 			if(find(S1.begin(), S1.end(), vec[i]) != vec.end())
 				H[S1[i]][vec[j]] = 1;
@@ -177,8 +211,9 @@ vector<vector<int> > R2(vector<vector<int> > mat, int size,
 	res2 = B1(H, size);
 
 	//Now the next step is to add these edges to the original graph.
-	for(int i=0;i<size;i++){
-		for(int j=0;j<size;j++){
+	#pragma omp parallel for default(shared) private(i, j)
+	for(int i = 0;i < size;i++){
+		for(int j = 0;j < size;j++){
 			if(!mat[i][j] && res2[i][j]){
 				mat[i][j] = 1;
 			}
@@ -187,13 +222,15 @@ vector<vector<int> > R2(vector<vector<int> > mat, int size,
 
 	//Next step is to search from original S nodes to a distance of n/s1 
 	//in the resulting mat graph. Also search_dist is same as before.
-	for(int i=0;i<s;i++){
+	#pragma omp parallel for default(shared) private(i)
+	for(int i = 0;i < s;i++){
 		vector<int> vec;
 		vector<int> reach(size);
 		search(mat, size, S[i], search_dist, vec, reach);
 
 		int x = vec.size();
-		for(int j=0;j<x;j++){
+		#pragma omp parallel for default(shared) private(j)
+		for(int j = 0;j < x;j++){
 			res[S[i]][vec[j]] = 1;
 		}
 	}
