@@ -1,0 +1,49 @@
+N = 100, E = 5242, S = 16, D = 50
+Accuracy: 100.000000
+Brute Time: 0.150000
+Time: 0.130000
+
+N = 200, E = 12608, S = 33, D = 33
+Accuracy: 100.000000
+Brute Time: 0.300000
+Time: 1.010000
+
+N = 300, E = 36427, S = 37, D = 150
+Accuracy: 100.000000
+Brute Time: 0.460000
+Time: 0.840000
+
+N = 400, E = 80332, S = 25, D = 26
+Accuracy: 100.000000
+Brute Time: 0.710000
+Time: 0.440000
+
+N = 500, E = 56986, S = 41, D = 26
+Accuracy: 100.000000
+Brute Time: 1.030000
+Time: 1.030000
+
+N = 600, E = 29940, S = 25, D = 31
+Accuracy: 100.000000
+Brute Time: 1.520000
+Time: 1.020000
+
+N = 700, E = 302087, S = 87, D = 63
+Accuracy: 100.000000
+Brute Time: 2.410000
+Time: 1.630000
+
+N = 800, E = 600639, S = 40, D = 800
+Accuracy: 100.000000
+Brute Time: 4.010000
+Time: 1.740000
+
+N = 900, E = 182118, S = 33, D = 50
+Accuracy: 100.000000
+Brute Time: 4.490000
+Time: 0.580000
+
+N = 1000, E = 968319, S = 125, D = 41
+Accuracy: 100.000000
+Brute Time: 6.980000
+Time: 3.200000
