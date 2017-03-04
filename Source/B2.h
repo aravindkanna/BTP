@@ -43,6 +43,7 @@ namespace B2 {
 
 	void dfs(int u, int len, VI &visited, VI &reached, VI* adj)
 	{
+		if(u >= SZ(visited) || u < 0) return;
 		if(len == -1 || visited[u]) return;
 		visited[u] = 1;
 		reached.PB(u);
@@ -91,7 +92,7 @@ namespace B2 {
 
 			int K = subgroup.size();
 			//search forward from d sources with e processors
-			#pragma omp parallel for default(shared) schedule(runtime)
+			#pragma omp parallel for default(shared) schedule(runtime) num_threads(e)
 			for(int k = 0;k < K;k++) {
 				vector<int> reached;
 				vector<int> visited(n, 0);

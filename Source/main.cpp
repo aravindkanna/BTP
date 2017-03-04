@@ -46,7 +46,7 @@ void __f(const char* names, Arg1&& arg1, Args&&... args){
 //FILE *fin = freopen("in","r",stdin);
 //FILE *fout = freopen("out","w",stdout);
 
-const int N = int(1e5)+10;
+const int N = int(1e7)+10;
 const int brute_max = int(10e3)+10;
 VI G[N],S;
 VVI tmp;
@@ -120,9 +120,11 @@ double get_cpu_time(){
 int main()
 {
 	//omp_set_num_threads(4);
+	cout << "Scanning Started..." << endl;
 	scanf("%d %d %d %d %d",&n,&m,&s,&D,&t);
 	rootN = 0; while(rootN*rootN<n) rootN++;
 	tmp.clear(); tmp.resize(n);
+
 	for(int i=0; i<m; i++)
 	{
 		int u,v; scanf("%d %d",&u,&v); u--; v--;
@@ -134,31 +136,38 @@ int main()
 		int x; scanf("%d",&x); x--;
 		S.PB(x);
 	}
+	cout << "Scanning done" << endl;
 	
 	//test_recursive();
 
-	double start = get_cpu_time();
+	double start = omp_get_wtime();
 	VVI ans;
 	if(D <= t && D <= rootN) { 
+		cout << "Case 1 : D <= t and D <= root" << endl;
 		B2::solve(G,n,m,s,D,S,ans);
 	}
 	else if(t >= rootN) {
+		cout << "Case 2 : t >= sqrt(N)" << endl;
 		R1::solve(n,m,s,D,S,G,ans,rootN);	
 	}
 	else if(s >= ceil(n/t)) {
+		cout << "Case 3 : s >= ceil(n / t)" << endl;
 		R2::solve(n,m,s,D,S,G,ans,ceil(n/t));
 	}
 	else if(D <= t*t) {
+		cout << "Case 4 : D <= t*t" << endl;
 		R3::solve(n,m,s,D,S,G,ans,ceil(n/t));
 	} 
 	else  {
+		cout << "Case 5 : Else" << endl;
 		R3::solve(n,m,s,D,S,G,ans,ceil(n/t),1,ceil(n/(t*t)));	
 	} 
-	double end = get_cpu_time();
+	double end = omp_get_wtime();
 
 	printf("N = %d, E = %d, S = %d, D = %d\n",n,m,s,D);
 	if(n <= brute_max)
 	{
+		cout << "Starting Bruteforce..." << endl;
 		VVI dist(n,VI(n,0));
 		for(int i=0; i<n; i++)
 		{
@@ -184,6 +193,8 @@ int main()
 			for(auto v:ans[i])
 				assert(dist[i][v]==1);
 				*/
+
+		cout << "Bruteforce done" << endl;
 	}
 
 	printf("Time: %lf\n",end-start);
